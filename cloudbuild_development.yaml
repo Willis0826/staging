@@ -16,7 +16,7 @@ steps:
         "--image",
         "gcr.io/staging-blakbear/staging-development",
         "--region",
-        "europe-west2",
+        "europe-west1",
       ]
 images:
   - gcr.io/staging-blakbear/staging-development

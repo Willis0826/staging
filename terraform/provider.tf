@@ -1,11 +1,11 @@
 provider "google" {
   project = "staging-blakbear"
-  region  = "europe-west2"
+  region  = "europe-west1"
 }
 
 provider "google-beta" {
   project = "staging-blakbear"
-  region  = "europe-west2"
+  region  = "europe-west1"
 }
 
 

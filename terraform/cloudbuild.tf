@@ -22,7 +22,7 @@ resource "google_secret_manager_secret_iam_policy" "policy" {
 resource "google_cloudbuildv2_connection" "github" {
   provider = google-beta
   project  = "staging-blakbear"
-  location = "europe-west2"
+  location = "europe-west1"
   name     = "github"
 
   github_config {
@@ -36,7 +36,9 @@ resource "google_cloudbuildv2_connection" "github" {
 }
 
 resource "google_cloudbuildv2_repository" "staging" {
-  provider          = google-beta
+  provider = google-beta
+
+  location          = "europe-west1"
   name              = "staging-${var.deploy_env}"
   parent_connection = google_cloudbuildv2_connection.github.id
   remote_uri        = "https://github.com/Willis0826/staging.git"
@@ -44,7 +46,7 @@ resource "google_cloudbuildv2_repository" "staging" {
 
 resource "google_cloudbuild_trigger" "repo-trigger" {
   provider = google-beta
-  location = "europe-west2"
+  location = "europe-west1"
   name     = "staging-${var.deploy_env}"
 
   repository_event_config {
