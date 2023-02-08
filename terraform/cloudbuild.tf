@@ -45,6 +45,7 @@ resource "google_cloudbuildv2_repository" "staging" {
 resource "google_cloudbuild_trigger" "repo-trigger" {
   provider = google-beta
   location = "europe-west2"
+  name     = "staging-${var.deploy_env}"
 
   repository_event_config {
     repository = google_cloudbuildv2_repository.staging.id
