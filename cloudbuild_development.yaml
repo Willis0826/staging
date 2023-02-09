@@ -20,3 +20,5 @@ steps:
       ]
 images:
   - gcr.io/staging-blakbear/staging-development
+options:
+  logging: CLOUD_LOGGING_ONLY
