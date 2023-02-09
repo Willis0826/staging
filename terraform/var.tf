@@ -11,5 +11,14 @@ variable "cloud_build_branch" {
 }
 
 variable "cloud_run_service_min_count" {
-  type = string
+  type = number
 }
+
+variable "cloud_run_service_max_count" {
+  type = number
+}
+
+variable "cloud_run_is_public_access" {
+  type = bool
+}
+

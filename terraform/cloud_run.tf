@@ -26,6 +26,25 @@ resource "google_cloud_run_v2_service" "staging" {
 
     scaling {
       min_instance_count = var.cloud_run_service_min_count
+      max_instance_count = var.cloud_run_service_max_count
     }
   }
+}
+
+# public access for cloud run service
+data "google_iam_policy" "public-access" {
+  binding {
+    role = "roles/run.invoker"
+    members = [
+      "allUsers",
+    ]
+  }
+}
+
+resource "google_cloud_run_v2_service_iam_policy" "staging-policy" {
+  count       = var.cloud_run_is_public_access ? 1 : 0
+  project     = google_cloud_run_v2_service.staging.project
+  location    = google_cloud_run_v2_service.staging.location
+  name        = google_cloud_run_v2_service.staging.name
+  policy_data = data.google_iam_policy.public-access.policy_data
 }

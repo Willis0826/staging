@@ -23,7 +23,7 @@ resource "google_cloudbuildv2_connection" "github" {
   provider = google-beta
   project  = "staging-blakbear"
   location = "europe-west1"
-  name     = "github"
+  name     = "github-staging-${var.deploy_env}"
 
   github_config {
     app_installation_id = 34004486
