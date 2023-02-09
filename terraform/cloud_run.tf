@@ -1,5 +1,5 @@
 resource "google_cloud_run_v2_service" "staging" {
-  name     = "staging-${var.deploy_env}"
+  name     = "${var.project_name}-${var.deploy_env}"
   location = "europe-west1"
 
   template {
