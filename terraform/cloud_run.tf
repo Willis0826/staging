@@ -1,10 +1,17 @@
 resource "google_cloud_run_v2_service" "staging" {
-  name     = "staging-${var.deploy_env}"
+  name     = "${var.project_name}-${var.deploy_env}"
   location = "europe-west1"
 
   template {
     containers {
       image = "gcr.io/staging-blakbear/staging-${var.deploy_env}"
+      resources {
+        cpu_idle = true
+        limits = {
+          cpu    = var.cloud_run_limits_cpu
+          memory = var.cloud_run_limits_memory
+        }
+      }
       startup_probe {
         initial_delay_seconds = 10
         timeout_seconds       = 3
@@ -22,12 +29,25 @@ resource "google_cloud_run_v2_service" "staging" {
       ports {
         container_port = 8000
       }
+      env {
+        name  = "GUNICORN_WORKERS"
+        value = var.cloud_run_gunicorn_workers
+      }
     }
 
     scaling {
       min_instance_count = var.cloud_run_service_min_count
       max_instance_count = var.cloud_run_service_max_count
     }
+  }
+
+  lifecycle {
+    ignore_changes = [
+      annotations,
+      client,
+      client_version,
+      template[0].annotations,
+    ]
   }
 }
 

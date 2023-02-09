@@ -23,7 +23,7 @@ resource "google_cloudbuildv2_connection" "github" {
   provider = google-beta
   project  = "staging-blakbear"
   location = "europe-west1"
-  name     = "github-staging-${var.deploy_env}"
+  name     = "github-${var.project_name}-${var.deploy_env}"
 
   github_config {
     app_installation_id = 34004486
@@ -39,7 +39,7 @@ resource "google_cloudbuildv2_repository" "staging" {
   provider = google-beta
 
   location          = "europe-west1"
-  name              = "staging-${var.deploy_env}"
+  name              = "${var.project_name}-${var.deploy_env}"
   parent_connection = google_cloudbuildv2_connection.github.id
   remote_uri        = "https://github.com/Willis0826/staging.git"
 }
@@ -47,7 +47,7 @@ resource "google_cloudbuildv2_repository" "staging" {
 resource "google_cloudbuild_trigger" "repo-trigger" {
   provider = google-beta
   location = "europe-west1"
-  name     = "staging-${var.deploy_env}"
+  name     = "${var.project_name}-${var.deploy_env}"
 
   repository_event_config {
     repository = google_cloudbuildv2_repository.staging.id
@@ -56,8 +56,12 @@ resource "google_cloudbuild_trigger" "repo-trigger" {
     }
   }
 
-  filename        = "cloudbuild_${var.deploy_env}.yaml"
+  filename        = "cloudbuild.yaml"
   service_account = google_service_account.cloudbuild_service_account.id
+
+  substitutions = {
+    _DEPLOY_ENV = var.deploy_env
+  }
 
   depends_on = [
     google_project_iam_member.act_as,
@@ -69,7 +73,7 @@ resource "google_cloudbuild_trigger" "repo-trigger" {
 
 # permission for cloud build to trigger cloud run deployment
 resource "google_service_account" "cloudbuild_service_account" {
-  account_id = "staging-sa-${var.deploy_env}"
+  account_id = "${var.project_name}-sa-${var.deploy_env}"
 }
 
 resource "google_project_iam_member" "act_as" {
