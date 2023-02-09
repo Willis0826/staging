@@ -51,3 +51,7 @@ https://staging-development-62ffxf2jla-ew.a.run.app
 ```
 
 ## Production environment
+
+```bash
+curl https://staging-production-62ffxf2jla-ew.a.run.app
+```

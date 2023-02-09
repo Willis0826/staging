@@ -56,8 +56,12 @@ resource "google_cloudbuild_trigger" "repo-trigger" {
     }
   }
 
-  filename        = "cloudbuild_${var.deploy_env}.yaml"
+  filename        = "cloudbuild.yaml"
   service_account = google_service_account.cloudbuild_service_account.id
+
+  substitutions = {
+    _DEPLOY_ENV = var.deploy_env
+  }
 
   depends_on = [
     google_project_iam_member.act_as,
