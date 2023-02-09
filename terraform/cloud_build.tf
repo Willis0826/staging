@@ -56,5 +56,42 @@ resource "google_cloudbuild_trigger" "repo-trigger" {
     }
   }
 
-  filename = "cloudbuild_${var.deploy_env}.yaml"
+  filename        = "cloudbuild_${var.deploy_env}.yaml"
+  service_account = google_service_account.cloudbuild_service_account.id
+
+  depends_on = [
+    google_project_iam_member.act_as,
+    google_project_iam_member.cloudbuild_builder,
+    google_project_iam_member.cloudrun_admin,
+    google_project_iam_member.logs_writer,
+  ]
+}
+
+# permission for cloud build to trigger cloud run deployment
+resource "google_service_account" "cloudbuild_service_account" {
+  account_id = "staging-sa-${var.deploy_env}"
+}
+
+resource "google_project_iam_member" "act_as" {
+  project = "staging-blakbear"
+  role    = "roles/iam.serviceAccountUser"
+  member  = "serviceAccount:${google_service_account.cloudbuild_service_account.email}"
+}
+
+resource "google_project_iam_member" "cloudbuild_builder" {
+  project = "staging-blakbear"
+  role    = "roles/cloudbuild.builds.builder"
+  member  = "serviceAccount:${google_service_account.cloudbuild_service_account.email}"
+}
+
+resource "google_project_iam_member" "cloudrun_admin" {
+  project = "staging-blakbear"
+  role    = "roles/run.admin"
+  member  = "serviceAccount:${google_service_account.cloudbuild_service_account.email}"
+}
+
+resource "google_project_iam_member" "logs_writer" {
+  project = "staging-blakbear"
+  role    = "roles/logging.logWriter"
+  member  = "serviceAccount:${google_service_account.cloudbuild_service_account.email}"
 }
